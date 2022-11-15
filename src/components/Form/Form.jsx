@@ -1,3 +1,6 @@
+import { useDispatch, useSelector } from 'react-redux';
+import { add } from 'redux/slices';
+import { getContactsValue } from 'redux/selectors';
 import { Box } from 'components/Box';
 
 import {
@@ -7,9 +10,28 @@ import {
   SubmitButton,
 } from './Form.styled';
 
-export const Form = ({ handleSubmit }) => {
+export const Form = () => {
+  const contactsArray = useSelector(getContactsValue);
+
+  const dispatch = useDispatch();
+
+  const addContact = e => {
+    e.preventDefault();
+    const { name, number } = e.target.elements;
+    const isContactAdded = contactsArray.some(
+      contact => contact.name === name.value
+    );
+
+    if (isContactAdded) {
+      alert(`${name.value} is Already in contacts`);
+    } else {
+      dispatch(add(name.value, number.value));
+    }
+    e.currentTarget.reset();
+  };
+
   return (
-    <ContactForm onSubmit={handleSubmit}>
+    <ContactForm onSubmit={addContact}>
       <Box dispay="flex" flexDirection="column" mb="20px">
         <ContactLabel htmlFor="name">Name</ContactLabel>
         <ContactInput
